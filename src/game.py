@@ -378,15 +378,14 @@ class Juego:
                     else:
                         if self.contador_final <= CHARGE_TIME:
                             self.contador_final += 1
-                            self.flag_establecer_enemigo = True
-                            self.ganaste = True
-                            self.contador_texto = 0
-                            self.total_enemigos = 0
+                            self.finalizado = True
+                            self.eliminar_enemigos()
                         else:
                             if self.score < SCORE_MIN:
-                                self.mensaje = "La próxima será :("
+                                self.mensaje = "PUNTAJE BAJO. La próxima será :("
                             else:
                                 self.score += SCORE_WAVE
+                                self.ganaste = True
                                 self.mensaje = "FELICIDADES, HAS GANADO!!! :D"
                             self.game_over()
 
@@ -472,14 +471,16 @@ class Juego:
             self.contador_texto += 1
             self.generar_texto(f"OLEADA 1", self.fuente_pixel, DISPLAY_WAVE, GRIS)
             self.generar_texto(f"Cargando enemigos. Preparate", self.fuente_pixel, DISPLAY_WORD, GRIS)
-        if self.contador_texto <= CHARGE_TIME and self.contador_niveles == 2:
+        elif self.contador_texto <= CHARGE_TIME and self.contador_niveles == 2:
             self.contador_texto += 1
             self.generar_texto(f"OLEADA 2", self.fuente_pixel, DISPLAY_WAVE, GRIS)
             self.generar_texto(f"Cargando nuevos enemigos. Preparate", self.fuente_pixel, DISPLAY_WORD, GRIS)
-        if self.contador_texto <= CHARGE_TIME and self.contador_niveles == 3:
+        elif self.contador_texto <= CHARGE_TIME and self.contador_niveles == 3:
             self.contador_texto += 1
             self.generar_texto(f"OLEADA 3", self.fuente_pixel, DISPLAY_WAVE, GRIS)
             self.generar_texto(f"ULTIMA OLEADA. PREPARATE", self.fuente_pixel, DISPLAY_WORD, GRIS)
+        elif self.finalizado:
+            self.generar_texto(f"HAS COMPLETADO TODAS LAS OLEADAS", self.fuente_pixel, DISPLAY_WORD, GRIS)
 
         pygame.display.flip()
 
@@ -566,14 +567,14 @@ class Juego:
         score_record = self.score
         self.contador_partidas += 1
         self.scoring_record()
-        self.score = 0
-        self.ganaste = False
-        flag = True
-        mostrar_texto = True
         if self.ganaste:
             self.win.play(-1)
         else:
             self.menu.play(-1)
+        self.score = 0
+        self.ganaste = False
+        flag = True
+        mostrar_texto = True
 
         while flag:
             for evento in pygame.event.get():
